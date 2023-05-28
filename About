@@ -13,10 +13,16 @@ Conclusion:
 I plan to incorporate more of such resources into my learning process, especially in the implementation part.
 
 Disclaimer:
-Even elliptic curve cryptography is being considered inadequate in post quantum computer era. So please research well before incorporating this code into your projects. Security is to be taken seriously and better solutions exist.
-There are better ways to generate stronger passwords. I am no expert and Better libraries exist.
+I am no expert and far better libraries exist.Please research well before incorporating this code into your projects. Security is to be taken seriously and better solutions exist.
+There are better ways to generate stronger passwords. 
+https://pypi.org/project/passlib/
+https://github.com/Ritoban2405/Python-Password-Generator
+https://www.geeksforgeeks.org/create-a-random-password-generator-using-python/
 
 Suggested reads:
 https://www.geeksforgeeks.org/generating-strong-password-using-python/
 
 https://github.com/keepassxreboot/keepassxc/blob/develop/README.md A free and open source password generator and manager by @peterdavehello . A nice place to learn.
+
+An off topic but worthwhile read:
+https://www.ibm.com/cloud/blog/what-is-quantum-safe-cryptography-and-why-do-we-need-it
