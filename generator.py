@@ -19,8 +19,8 @@ def generate_password(length):
             password.append(char)
             last_char = char
             qwerty_characters=jumble_string(qwerty_characters)
-    # Convert the password list to a string and return it
-    #password=jumble_string(password)#... we are skipping this step to avoid undermining the logic that prevents clustering
+    # Convert the password list to a string, jumble it and return
+    password=jumble_string(password)#... we are skipping this step to avoid undermining the logic that prevents clustering
     return ''.join(password)
 # a method that jumnles the provided string( in our case, the qwerty set of keystrokes to provide an added layer of randomness
 def jumble_string(string):
@@ -33,12 +33,8 @@ def jumble_string(string):
         jumbled_string=jumbled_string+c
     
     return jumbled_string
-'''
 
 
-
-
-  
 passlist = []
 # Generate 20 passwords and add them to the passlist
 for i in range(20):
@@ -50,4 +46,4 @@ print('scores on a scale from 0 to 4 where 0 means bad and 4 means very strong a
 #printing scores for each password suggestion along with estimated time to crack using standard brute force tests
 for i in passlist:
   insights=zxcvbn.zxcvbn(i)
-  print(f"suggestion: {i}, score:{insights['score']}")
+  print(f"suggestion: {i}, score:{insights['score']}, cracktime offline fasthashing 1e10 per second: {insights['crack_times_display']['offline_fast_hashing_1e10_per_second']}")
