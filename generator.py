@@ -1,3 +1,4 @@
+from time import sleep
 import secrets
 import string
 import random
@@ -39,7 +40,7 @@ passlist = []
 # Generate 20 passwords and add them to the passlist
 for i in range(20):
     # Choose a random password length between 16 and 20 characters
-    password_length = random.randint(16, 20)
+    password_length = 20#random.randint(16, 20)
     # Generate a password of the chosen length and add it to the passlist
     passlist.append(generate_password(password_length))
 print('scores on a scale from 0 to 4 where 0 means bad and 4 means very strong and 3 is average')
@@ -47,3 +48,7 @@ print('scores on a scale from 0 to 4 where 0 means bad and 4 means very strong a
 for i in passlist:
   insights=zxcvbn.zxcvbn(i)
   print(f"suggestion: {i}, score:{insights['score']}, cracktime offline fasthashing 1e10 per second: {insights['crack_times_display']['offline_fast_hashing_1e10_per_second']}")
+print('press ctrl+c to terminate\n')
+for i in range(30):
+	sleep(.999)
+	print(f'\r Autoterminating in {60-i-1} seconds', end='', flush=True)
