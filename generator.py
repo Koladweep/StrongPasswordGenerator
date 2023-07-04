@@ -1,8 +1,7 @@
 from time import sleep
 from secrets import choice
 from zxcvbn import zxcvbn
-from pandas import DataFrame as DF
-
+#from pandas import DataFrame as DF
 password_length = 0
 while not (17 <= password_length <= 25):
     try:
@@ -60,20 +59,13 @@ for i in range(20):
         'suggested password': passlist[i],
         'score': insights['score'],'@100/hr':insights['crack_times_display']['online_throttling_100_per_hour'], '@36,000/hr':insights['crack_times_display']['online_no_throttling_10_per_second'], '@196,000/hr':insights['crack_times_display']['offline_slow_hashing_1e4_per_second'], '@792.9M/hr':insights['crack_times_display']['offline_fast_hashing_1e10_per_second']})
 
+# Print the header
+print(f'{"Sl.No.":<10} {"suggested password":<20} {"score":<10} {"@100/hr":<15} {"@36,000/hr":<15} {"@196,000/hr":<15} {"@792.9M/hr":<15}')
 
-# Define a formatter function to center the text and add spaces
-def formatter(x):
-    return f'  {str(x).center(4)}  '
+# Print the data
+for row in results:
+    print(f'{row["Sl.No."]:<10} {row["suggested password"]:<20} {row["score"]:<10} {row["@100/hr"]:<15} {row["@36,000/hr"]:<15} {row["@196,000/hr"]:<15} {row["@792.9M/hr"]:<15}')
 
-# Create a dataframe from the results
-df=DF(results)
-
-# Apply the formatter to all columns
-formatters = {col: formatter for col in df.columns}
-
-
-# Print the dataframe with centered text and extra spaces between columns
-print(df.to_string(index=False, formatters=formatters))
 print('\nPress ctrl+c if you want to exit.\n')
 for i in range(30):
     sleep(.999)
