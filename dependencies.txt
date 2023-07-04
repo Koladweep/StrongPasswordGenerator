@@ -1,4 +1,4 @@
-dependencies:
-Sl No. 	 	Dependency 			Version		Installation				                Details					                    
-1		Python				 3.11.3		arch specific: https://python.org		        Language
-2       	zxcvbn				 4.4.28		pip install zxcvbn					Home-page: https://github.com/dwolfhub/zxcvbn-python
+| Sl No. | Dependency | Version | Installation | Details |
+|--------|------------|---------|--------------|---------|
+| 1      | Python     | 3.11.3  | arch specific: https://python.org | Language |
+| 2      | zxcvbn     | 4.4.28  | pip install zxcvbn | Home-page: https://github.com/dwolfhub/zxcvbn-python |
