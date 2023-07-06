@@ -15,7 +15,7 @@ This code was developed with the assistance of OpenAI's GPT-3.5 model. However, 
 
 
                             ***
-JUly 4 2022
+JUly 4 2023
 update: I have uplploaded compiled files for Windows 64 bit editons(windows 10 and above) for those who don't want to deal with a python interpreter. it is a zip file that you can simply extract and run(passgen.exe)
 Linux, I haven't done yet. Anyway linux users can use the terminal.
 You can compile it yourself using Nuitka or Pyinstaller libraries by following their instructions on PyPi.org...
