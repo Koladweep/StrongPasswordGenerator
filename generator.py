@@ -18,8 +18,8 @@ def generate_password(length):
     while len(password) < length:
         # Choose a random character from the character set
         char = choice(qwerty_characters)
-        # Check if the character meets the conditions for inclusion in the password
-        if char != last_char and password.count(char) < 2 and char in qwerty_characters:
+        #avoiding adjacant character duplication and repetation more than 20 percent of character count
+        if char != last_char and password.count(char) <length//5 and char in qwerty_characters:
             password.append(char)
             last_char = char
             qwerty_characters = jumble_string(qwerty_characters)
