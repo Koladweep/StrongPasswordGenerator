@@ -19,3 +19,7 @@ You can compile it yourself using Nuitka or Pyinstaller libraries by following t
 
 Warning: If you use the free version of Nuitka compilser, it creates unsigned binaries that your antivirus will gobble it up in no time.
  Better stick with pyinstaller.
+
+
+July 6 2023.[deleted compiled package.]
+Removed the compiled package as it has been compiled by the free version of nuitka and thus being unsigned, it is falsely dettected by windows defender as a malware and gets quarantined.
