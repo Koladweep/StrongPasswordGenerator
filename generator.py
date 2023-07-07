@@ -43,6 +43,7 @@ class generator():
         if not isinstance(password_length, int):
             raise TypeError("password_length must be an integer.")
         # Generate n passwords and add them to the passlist
+        self.__init__()
         for i in range(n):
             # Generate a password of the chosen length and add it to the passlist
             self.passlist.append(self._generate_password(password_length))
