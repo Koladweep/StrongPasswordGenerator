@@ -1,17 +1,20 @@
 from time import sleep
 from secrets import choice
 from zxcvbn import zxcvbn
-#from pandas import DataFrame as DF
+from pandas import DataFrame as DF
 class generator():
     def __init__(self) -> None:
         self.passlist=[]
         self.results=[]
-    def _generate_password(self,length):
+        self.bestsuggestion=""
+        self.df= DF(self.passlist)
+    def _generate_password(self.results):
         # Define the character set to be used in the password generation
         qwerty_characters = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+{}|:\"<>?"
         qwerty_characters = self._jumble_string(qwerty_characters)
         password = []
         last_char = ''
+        
         while len(password) < length:
             # Choose a random character from the character set
             char = choice(qwerty_characters)
@@ -42,11 +45,13 @@ class generator():
             raise TypeError("n must be an integer.")
         if not isinstance(password_length, int):
             raise TypeError("password_length must be an integer.")
-        # Generate n passwords and add them to the passlist
+        #clear up the memory before generating new suggestions
         self.__init__()
+        # Generate n passwords and add them to the passlist
         for i in range(n):
             # Generate a password of the chosen length and add it to the passlist
             self.passlist.append(self._generate_password(password_length))
+            
         self.strengthEvaluator()
     
 
@@ -63,6 +68,7 @@ class generator():
             self.results.append({'Sl.No.':i+1,
                 'suggested password': self.passlist[i],
                 'score': insights['score'],'@100/hr':insights['crack_times_display']['online_throttling_100_per_hour'], '@36,000/hr':insights['crack_times_display']['online_no_throttling_10_per_second'], '@196,000/hr':insights['crack_times_display']['offline_slow_hashing_1e4_per_second'], '@792.9M/hr':insights['crack_times_display']['offline_fast_hashing_1e10_per_second']})
+            self.df= DF(self.results)
     def displaysuggestions(self):
         # Print the header
         print(f'{"Sl.No.":<10} {"suggested password":<20} {"score":<10} {"@100/hr":<15} {"@36,000/hr":<15} {"@196,000/hr":<15} {"@792.9M/hr":<15}')
@@ -72,6 +78,9 @@ class generator():
             print(f'{row["Sl.No."]:<10} {row["suggested password"]:<20} {row["score"]:<10} {row["@100/hr"]:<15} {row["@36,000/hr"]:<15} {row["@196,000/hr"]:<15} {row["@792.9M/hr"]:<15}')
 
 def main():
+    """ An exalts of how this class can be used """
+
+                                                                                         
     class CustomError(Exception):
         pass
     password_length = 0
