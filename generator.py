@@ -5,11 +5,21 @@ from zxcvbn import zxcvbn
 
 class Generator:
     def __init__(self):
+        """
+        Initializes the Generator object with an empty list of passwords.
+        """
         self.passlist = []
-        self.results = []
-        self.password_length = 0
 
     def _generate_password(self, length):
+        """
+        Generates a random password of the given length using a combination of alphabets and symbols.
+        
+        :param length: The length of the password to generate
+        :type length: int
+        :return: The generated password
+        :rtype: str
+        """
+        
         # Define the character sets to be used in the password generation
         alphabets = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
         symbols = '`1234567890-=[]\\;\',./~!@#$%^&*()_+{}|:"<>?'
@@ -27,9 +37,19 @@ class Generator:
         return ''.join(password)
 
     def _jumble_string(self, string):
+        """
+        Shuffles the characters in a given string.
+        
+        :param string: The string to shuffle
+        :type string: str
+        :return: The shuffled string
+        :rtype: str
+        """
+        
         chars = list(string)
         jumbled_string = ''
         l = len(chars)
+        
         for i in range(l):
             c = choice(chars)
             chars.remove(c)
@@ -38,6 +58,12 @@ class Generator:
         return jumbled_string
 
     def generator(self, n, password_length):
+        """
+        Generates n passwords of the given length using the _generate_password method.
+        
+        :param n: The number of passwords to generate
+        :type n: int
+        """
         if not isinstance(n, int):
             raise TypeError("n must be an integer.")
         if not isinstance(password_length, int):
@@ -45,46 +71,32 @@ class Generator:
         if password_length < 11:
             return []  # Return an empty list if the password length is less than 11
         self.__init__()  # Clear memory to clear out previously generated suggestions
-        self.password_length = password_length
         num_generated = 0  # Counter for the number of generated passwords with score 4
-        #gap_counter = 0  # Counter to track the gap between successful score 4 generations
-
         while num_generated < n:
             password = self._generate_password(password_length)
             insights = zxcvbn(password)
             if insights['score'] == 4:
                 self.passlist.append([password,insights['crack_times_seconds']['offline_fast_hashing_1e10_per_second']])
                 num_generated += 1
-                gap_counter = 0  # Reset the gap counter since a score 4 password was generated
-            else:
-                gap_counter += 1
-
-
-
-    def strengthEvaluator(self):
-        self.results = []
-        for i, password in enumerate(self.passlist):
-            if not isinstance(password, str):
-                raise ValueError("The Password list must contain string literals")
-
-            insights = zxcvbn(password)
-            result_entry = [
-                i + 1,
-                password,
-                insights['score'],
-                insights['crack_times_seconds']['offline_fast_hashing_1e10_per_second']
-            ]
-            self.results.append(result_entry)
 
     def get_top_passwords(self, n):
-        """Returns a subset of the original self.passlist containing the top 'n' suggestions sorted by longest crack times."""
+        """Returns a subset of the original self.passlist containing the top 'n' suggestions sorted by longest crack times.
+        :param n: The upper bound to the number of top passwords to filter out.
+        :type n: int
+        """
         sorted_passwords = sorted(self.passlist, key=lambda p: p[1], reverse=True)
         return sorted_passwords[:n]
 
-
-
-
+    
     def display_suggestions(self, n):
+        """
+        Displays the top n suggested passwords in a tabular format along with their score and crack time in hours.
+        
+        :param n: The number of top passwords to display
+        :type n: int
+        """
+        
+        # Fetch the top n passwords from the list of generated passwords
         top = self.get_top_passwords(n)
         
         # Determine the maximum password length in the top suggestions
@@ -92,12 +104,12 @@ class Generator:
         
         # Print the header
         print(f'{"Sl.No.":<8} {"suggested password":<{max_length+5}} {"score":<10} {"Vs e^10/sec Hashing[Hrs].":<27}')
-
         
         # Print the data
         for i, (password, crack_time) in enumerate(top, start=1):
+            # Display the index, password, score and crack time in hours
             print(f'{i:<8} {password:<{max_length+5}} {4:<10} {crack_time / 3600:<.4f}')
-
+    
 
 
 def main():
