@@ -2,33 +2,31 @@ from time import sleep
 from secrets import choice
 from zxcvbn import zxcvbn
 from pandas import DataFrame as DF
-class generator():
-    def __init__(self) -> None:
-        self.passlist=[]
-        self.results=[]
-        self.bestsuggestion=""
-        self.df= DF(self.passlist)
-    def _generate_password(self.results):
-        # Define the character set to be used in the password generation
-        qwerty_characters = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+{}|:\"<>?"
-        qwerty_characters = self._jumble_string(qwerty_characters)
-        password = []
-        last_char = ''
-        
-        while len(password) < length:
-            # Choose a random character from the character set
-            char = choice(qwerty_characters)
-            #avoiding adjacant character duplication and repetation more than 20 percent of character count
-            if char != last_char and password.count(char) <length//5 and char in qwerty_characters:
-                password.append(char)
-                last_char = char
-                qwerty_characters = self._jumble_string(qwerty_characters)
-        # Convert the password list to a string, jumble it and return
-        password = self._jumble_string(password)  # ... we are skipping this step to avoid undermining the logic that prevents clustering
+
+class Generator:
+    def __init__(self):
+        self.passlist = []
+        self.results = []
+        self.df = DF()
+        self.password_length=0
+    def _generate_password(self, length):
+        # Define the character sets to be used in the password generation
+        alphabets = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
+        symbols = '`1234567890-=[]\\;\',./~!@#$%^&*()_+{}|:"<>?'
+
+        # Calculate the number of symbols to be used
+        num_symbols = int(length * 0.1)  # 10% of password length
+
+        # Randomly choose alphabets and symbols to form the password
+        password = [choice(alphabets) for _ in range(length - num_symbols)]
+        password += [choice(symbols) for _ in range(num_symbols)]
+
+        # Shuffle the password characters
+        password = self._jumble_string(password)
+
         return ''.join(password)
 
-    # a method that jumbles the provided string (in our case, the qwerty set of keystrokes to provide an added layer of randomness)
-    def _jumble_string(self,string):
+    def _jumble_string(self, string):
         chars = list(string)
         jumbled_string = ''
         l = len(chars)
@@ -39,89 +37,89 @@ class generator():
 
         return jumbled_string
 
-
-    def generator(self,n,password_length):
+    def generator(self, n, password_length):
         if not isinstance(n, int):
             raise TypeError("n must be an integer.")
         if not isinstance(password_length, int):
             raise TypeError("password_length must be an integer.")
-        #clear up the memory before generating new suggestions
-        self.__init__()
-        # Generate n passwords and add them to the passlist
-        for i in range(n):
-            # Generate a password of the chosen length and add it to the passlist
-            self.passlist.append(self._generate_password(password_length))
-            
+        self.__init__()#clearing memory to clear out previously generated suggestions
+        self.password_length=password_length
+        self.passlist = [self._generate_password(password_length) for _ in range(n)]
         self.strengthEvaluator()
-    
-
 
     def strengthEvaluator(self):
-        '''Accepts a list of passwords and returns insights in the form of list of the passwords and their score [on a scale of 0 to 4] and respective cracktime estimates at different brute force speeds.'''
-        for password in self.passlist:
-            if not isinstance(password,str):
+        """Accepts a list of passwords and returns insights in the form of list of the passwords and their score
+        [on a scale of 0 to 4] and respective cracktime estimates at different brute force speeds."""
+        self.results = []
+        for i, password in enumerate(self.passlist):
+            if not isinstance(password, str):
                 raise ValueError("The Password list must contain string literals")
-        # Create an empty list to store the results
-        # Calculate scores for each password suggestion along with estimated time to crack using standard brute force tests
-        for i in range(len(self.passlist)):
-            insights = zxcvbn(self.passlist[i])
-            self.results.append({'Sl.No.':i+1,
-                'suggested password': self.passlist[i],
-                'score': insights['score'],'@100/hr':insights['crack_times_display']['online_throttling_100_per_hour'], '@36,000/hr':insights['crack_times_display']['online_no_throttling_10_per_second'], '@196,000/hr':insights['crack_times_display']['offline_slow_hashing_1e4_per_second'], '@792.9M/hr':insights['crack_times_display']['offline_fast_hashing_1e10_per_second']})
-            self.df= DF(self.results)
-    def displaysuggestions(self):
-        # Print the header
-        print(f'{"Sl.No.":<10} {"suggested password":<20} {"score":<10} {"@100/hr":<15} {"@36,000/hr":<15} {"@196,000/hr":<15} {"@792.9M/hr":<15}')
 
+            insights = zxcvbn(password)
+            self.results.append({
+                'Sl.No.': i + 1,
+                'suggested password': password,
+                'score': insights['score'],
+                '@100/hr': insights['crack_times_display']['online_throttling_100_per_hour'],
+                '@36,000/hr': insights['crack_times_display']['online_no_throttling_10_per_second'],
+                '@196,000/hr': insights['crack_times_display']['offline_slow_hashing_1e4_per_second'],
+                '@792.9M/hr': insights['crack_times_display']['offline_fast_hashing_1e10_per_second']
+            })
+
+        self.df = DF(self.results)
+
+    def get_top_passwords(self, n):
+        """returns a subset of the original self.results containing top n suggestions sorted in descending order of strength"""
+        df = self.df[self.df['score'] == 4]
+        df = df.sort_values(by='score', ascending=False)  # Sort in descending order based on 'score'
+        top_passwords = df.head(n).to_dict('records')  # Convert the top 'n' rows to a list of dictionaries
+        return top_passwords
+
+    def display_suggestions(self, n):#displays top n suggestions
+        # Print the header
+        if not isinstance(n,int):
+            raise ValueError("n must be integer type")
+        print(f'{"Sl.No.":<8} {"suggested password":<{self.password_length+5}} {"score":<10} {"@100/hr":<10} {"@36,000/hr":<10} {"@196,000/hr":<10} {"@792.9M/hr":<10}')
+        top = self.get_top_passwords(n)
         # Print the data
-        for row in self.results:
-            print(f'{row["Sl.No."]:<10} {row["suggested password"]:<20} {row["score"]:<10} {row["@100/hr"]:<15} {row["@36,000/hr"]:<15} {row["@196,000/hr"]:<15} {row["@792.9M/hr"]:<15}')
+        for row in top:
+            print(f'{row["Sl.No."]:<8} {row["suggested password"]:{self.password_length+5}} {row["score"]:<10} {row["@100/hr"]:<10} {row["@36,000/hr"]:<10} {row["@196,000/hr"]:<13} {row["@792.9M/hr"]:<10}')
 
 def main():
-    """ An exalts of how this class can be used """
-
-                                                                                         
-    class CustomError(Exception):
-        pass
+    """An example of how this class can be used"""
     password_length = 0
-    numberOfSuggestions=0
-    class CustomError(Exception):
-        pass
+    numberOfSuggestions = 0
 
     while True:
         try:
-            password_length = int(input('Set password length between 17 to 25: ').strip())
-            if not 17 <= password_length <= 25:
-                raise CustomError('Length must be between 17 and 25. Try again.')
-            if 17 <= password_length <= 25:
-                break  # Break the loop if valid input is provided
-
+            password_length = int(input('Set password length between 15 to 25: ').strip())
+            if not 15 <= password_length <= 25:
+                print('Length must be between 15 and 25. Try again.')
+                continue
+            else:
+                break#if specified length is within hard coded constraints
         except ValueError:
             print('Invalid input. Try again.\n\n')
-        
-        except CustomError as e:
-            print('Error:', str(e), '\n\n')
 
     while True:
         try:
             numberOfSuggestions = int(input('How many suggestions to generate? Enter a value between 1 to 100: ').strip())
             if not 0 < numberOfSuggestions <= 100:
-                raise CustomError('Only values between 1 and 100 (inclusive) are allowed.')
-            if 0 < numberOfSuggestions <= 100:
-                break  # Break the loop if valid input is provided
-        
+                print('Only values between 1 and 100 (inclusive) are allowed.')
+                continue
+            else:
+                break#if number of suggestions requested is within hard-coded limits
         except ValueError:
             print('Invalid input. Try again.\n\n')
-        
-        except CustomError as e:
-            print('Error:', str(e), '\n\n')
 
-    generatorObject=generator()
-    generatorObject.generator(numberOfSuggestions,password_length)
-    generatorObject.displaysuggestions()    
-    print('\nPress ctrl+c if you want to exit.\n')
+    generatorObject = Generator()
+    generatorObject.generator(numberOfSuggestions, password_length)
+    generatorObject.display_suggestions(10)
+
+    print('\nPress Ctrl+C if you want to exit.\n')
     for i in range(30):
         sleep(.999)
-        print(f'\r Autoterminating in {30 - i - 1} seconds', end='', flush=True)
+        print(f'\rAutoterminating in {30 - i - 1} seconds', end='', flush=True)
+
 if __name__ == "__main__":
     main()
