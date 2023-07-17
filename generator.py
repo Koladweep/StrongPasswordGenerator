@@ -9,7 +9,7 @@ class Generator:
         self.results = []
         self.df = DF()
         self.password_length=0
-    def _generate_password(self, length):
+    def _generate_password(self,length):
         # Define the character sets to be used in the password generation
         alphabets = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'
         symbols = '`1234567890-=[]\\;\',./~!@#$%^&*()_+{}|:"<>?'
@@ -26,7 +26,7 @@ class Generator:
 
         return ''.join(password)
 
-    def _jumble_string(self, string):
+    def _jumble_string(self,string):
         chars = list(string)
         jumbled_string = ''
         l = len(chars)
@@ -37,7 +37,7 @@ class Generator:
 
         return jumbled_string
 
-    def generator(self, n, password_length):
+    def generator(self,n,password_length):
         if not isinstance(n, int):
             raise TypeError("n must be an integer.")
         if not isinstance(password_length, int):
