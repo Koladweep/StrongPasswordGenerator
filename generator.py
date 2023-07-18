@@ -79,7 +79,7 @@ class Generator:
                 self.passlist.append([password,insights['crack_times_seconds']['offline_fast_hashing_1e10_per_second']])
                 num_generated += 1
 
-    def get_top_passwords(self, n):
+    def get_top_N_passwords(self, N):
         """Returns a subset of the original self.passlist containing the top 'n' suggestions sorted by longest crack times.
         :param n: The upper bound to the number of top passwords to filter out.
         :type n: int
@@ -88,16 +88,16 @@ class Generator:
         return sorted_passwords[:n]
 
     
-    def display_suggestions(self, n):
+    def display_suggestions(self, N):
         """
-        Displays the top n suggested passwords in a tabular format along with their score and crack time in hours.
+        Displays the upto N top ranking passwords [if there are N or more, otherwise if less only upto what is present in the list] suggested passwords in a tabular format along with their score and crack time in hours.
         
         :param n: The number of top passwords to display
         :type n: int
         """
         
         # Fetch the top n passwords from the list of generated passwords
-        top = self.get_top_passwords(n)
+        top = self.get_top_N_passwords(n)
         
         # Determine the maximum password length in the top suggestions
         max_length = max(len(password) for password, _ in top)
