@@ -85,7 +85,7 @@ class Generator:
         :type n: int
         """
         sorted_passwords = sorted(self.passlist, key=lambda p: p[1], reverse=True)
-        return sorted_passwords[:n]
+        return sorted_passwords[:N]
 
     
     def display_suggestions(self, N):
@@ -97,7 +97,7 @@ class Generator:
         """
         
         # Fetch the top n passwords from the list of generated passwords
-        top = self.get_top_N_passwords(n)
+        top = self.get_top_N_passwords(N)
         
         # Determine the maximum password length in the top suggestions
         max_length = max(len(password) for password, _ in top)
